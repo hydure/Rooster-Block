@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Cock_Block
+namespace RoosterBlock
 {
     public partial class App : Application
     {

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30317.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cock Block.Android", "Cock Block.Android\Cock Block.Android.csproj", "{6B56AA90-2A2F-41F7-B9DE-1BEE0D01D266}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoosterBlock.Android", "RoosterBlock.Android\RoosterBlock.Android.csproj", "{6B56AA90-2A2F-41F7-B9DE-1BEE0D01D266}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cock Block", "Cock Block\Cock Block.csproj", "{F514B969-DE5C-4105-BC35-0323391D8E92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoosterBlock", "RoosterBlock\RoosterBlock.csproj", "{F514B969-DE5C-4105-BC35-0323391D8E92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace Cock_Block
+namespace RoosterBlock
 {
     public partial class MainPage : ContentPage
     {
