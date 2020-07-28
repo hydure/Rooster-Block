@@ -74,6 +74,7 @@ namespace RoosterBlock.Droid
         {
             Log.Info(TAG, "Intent received: " + intent.Action);
             Toast.MakeText(context, "Received intent!", ToastLength.Short).Show();
+            MainActivity.CreateNotificationFromIntent(intent);
         }
     }
 }

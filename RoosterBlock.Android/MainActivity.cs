@@ -71,7 +71,7 @@ namespace RoosterBlock.Droid
         /// Create the Android notification when a message is received.
         /// </summary>
         /// <param name="intent">This contains the title and message of the notification.</param>
-        void CreateNotificationFromIntent(Intent intent)
+        public static void CreateNotificationFromIntent(Intent intent)
         {
             // TODO: Android offers many advanced options for notifications. For more information, see Notifications in
             // Xamarin.Android.
