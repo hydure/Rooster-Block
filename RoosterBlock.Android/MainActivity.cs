@@ -20,6 +20,10 @@ namespace RoosterBlock.Droid
         LaunchMode = LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        // Constants for the MMS Observer and Receiver.
+        public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
+        static readonly Android.Net.Uri MMS_URI = (Android.Net.Uri)"content://mms";
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -33,6 +37,16 @@ namespace RoosterBlock.Droid
 
             // When the application is started by notification data, the Intent data will be passed to this OnCreate method.
             CreateNotificationFromIntent(Intent);
+
+            // Create and register the MMS Observer to the content resolver.
+            MMSObserver mmsObserver = new MMSObserver(MMS_URI);
+            ContentResolver.RegisterContentObserver(MMS_URI, false, mmsObserver);
+
+            // Create and register the MMS Receiver to receive only MMS_RECEIVED intents, 
+            // which only MMS Observer sends.
+            MMSReceiver mmsReceiver = new MMSReceiver();
+            IntentFilter mmsReceiverIntentFilter = new IntentFilter(MMS_RECEIVED);
+            RegisterReceiver(mmsReceiver, mmsReceiverIntentFilter);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
