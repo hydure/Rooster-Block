@@ -12,7 +12,7 @@ namespace RoosterBlock.Droid
     // enumeration values, see Android Activity LaunchMode.  *** The LaunchMode.SingleTop may not be the right mode for this app. ***
     // https://developer.android.com/guide/topics/manifest/activity-element#lmode
     [Activity(
-        Label = "RoosterBlock",
+        Label = "Rooster Block",
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
         MainLauncher = true,

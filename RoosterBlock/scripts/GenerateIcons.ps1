@@ -5,7 +5,7 @@ if (-Not (Get-Module -Name Resize-Image)) {
 }
 
 $BaseDir        = "..\..\RoosterBlock.Android\Resources" | Resolve-Path
-$InputFile      = Join-Path -Path $BaseDir -ChildPath "drawable\RoosterBlockIconv1point5.png"
+$InputFile      = Join-Path -Path $BaseDir -ChildPath "drawable\432x432.png"
 
 Resize-Image -InputFile $InputFile -OutputFile (Join-Path -Path $BaseDir -ChildPath "mipmap-hdpi\icon.png")                   -Width  72 -Height  72
 Resize-Image -InputFile $InputFile -OutputFile (Join-Path -Path $BaseDir -ChildPath "mipmap-hdpi\launcher_foreground.png")    -Width 162 -Height 162
