@@ -5,13 +5,16 @@
 
         <!-- https://stackoverflow.com/questions/11289568/monitoring-mms-received-like-sms-received-on-android -->
         <receiver android:name=".MMSReceiver">
-            <intent-filter android:priority="1000"> IntentFilterPriority.HighPriority is equal to 1000 
-                <action android:name="android.provider.Telephony.MMS_RECEIVED"/>
+            <!-- IntentFilterPriority.HighPriority is equal to 1000 -->
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED"/>
                 <data android:mimeType="application/vnd.wap.mms-message" />
             </intent-filter>
         </receiver>
         
     </application>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_MMS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> <!-- Automatically starts at boot. -->

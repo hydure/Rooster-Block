@@ -22,6 +22,7 @@ namespace RoosterBlock.Droid
         public List<ImageClassificationModel> Classify(byte[] image)
         {
             MappedByteBuffer mappedByteBuffer = GetModelAsMappedByteBuffer();
+            // TODO: Find a solution that is not being deprecated.
             Xamarin.TensorFlow.Lite.Interpreter interpreter = new Xamarin.TensorFlow.Lite.Interpreter(mappedByteBuffer);
 
             //To resize the image, we first need to get its required width and height
