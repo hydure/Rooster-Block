@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.RoosterBlock">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
-    <application android:label="RoosterBlock.Android" android:theme="@style/MainTheme">
-
-        <!-- https://stackoverflow.com/questions/11289568/monitoring-mms-received-like-sms-received-on-android -->
-        <receiver android:name=".MMSReceiver">
-            <!-- IntentFilterPriority.HighPriority is equal to 1000 -->
-            <intent-filter android:priority="1000">
-                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED"/>
-                <data android:mimeType="application/vnd.wap.mms-message" />
-            </intent-filter>
-        </receiver>
-        
-    </application>
-    <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.RECEIVE_MMS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> <!-- Automatically starts at boot. -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> <!-- Shows a pop-up window on top of all other applications, even if the app is not running in the foreground -->
-    <!--<uses-permission android:name="android.permission.SEND_SMS"/> Can add permission if we want to add a response feature. -->
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.microsoft.roosterblock" android:installLocation="auto">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
+	<application android:label="Rooster Block" android:theme="@style/MainTheme" android:icon="@mipmap/icon">
+		<!-- https://stackoverflow.com/questions/11289568/monitoring-mms-received-like-sms-received-on-android -->
+		<receiver android:name=".MMSReceiver">
+			<!-- IntentFilterPriority.HighPriority is equal to 1000 -->
+			<intent-filter android:priority="1000">
+				<action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+				<data android:mimeType="application/vnd.wap.mms-message" />
+			</intent-filter>
+		</receiver>
+	</application>
+	<uses-permission android:name="android.permission.READ_SMS" />
+	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+	<uses-permission android:name="android.permission.RECEIVE_MMS" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<!-- Automatically starts at boot. -->
+	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+	<!-- Shows a pop-up window on top of all other applications, even if the app is not running in the foreground -->
+	<!--<uses-permission android:name="android.permission.SEND_SMS"/> Can add permission if we want to add a response feature. -->
 </manifest>

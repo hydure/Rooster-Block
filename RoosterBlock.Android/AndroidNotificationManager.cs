@@ -60,8 +60,8 @@ namespace RoosterBlock.Droid
                 .SetContentIntent(pendingIntent)
                 .SetContentTitle(title)
                 .SetContentText(message)
-                .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Drawable.xamagonBlue))
-                .SetSmallIcon(Resource.Drawable.xamagonBlue)
+                .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Mipmap.icon))
+                .SetSmallIcon(Resource.Mipmap.icon)
                 .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate)
                 .SetPriority(NotificationCompat.PriorityHigh)
                 .AddAction(Resource.Drawable.ic_mtrl_chip_checked_black, MarkAsReadAction, intent2);
