@@ -61,7 +61,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activity1.cs" />
     <Compile Include="AndroidNotificationManager.cs" />
     <Compile Include="ImageClassificationModel.cs" />
     <Compile Include="MainActivity.cs" />
