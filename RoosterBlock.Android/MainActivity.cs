@@ -22,7 +22,16 @@ namespace RoosterBlock.Droid
     {
         // Constants for the MMS Observer and Receiver.
         public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
-        static readonly Android.Net.Uri MMS_URI = (Android.Net.Uri)"content://mms";
+        static readonly Android.Net.Uri MMS_URI = Android.Net.Uri.Parse("content://mms");
+
+        // Create the MMS Observer.
+        MMSObserver mmsObserver = new MMSObserver(MMS_URI);
+
+        // Create the MMS Receiver.
+        MMSReceiver mmsReceiver = new MMSReceiver();
+        IntentFilter mmsReceiverIntentFilter = new IntentFilter(MMS_RECEIVED);
+        //MMSReceiver mmsReceiver2 = new MMSReceiver();
+        //IntentFilter mmsReceiverIntentFilter2 = new IntentFilter("android.provider.Telephony.WAP_PUSH_RECEIVED");
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,15 +47,14 @@ namespace RoosterBlock.Droid
             // When the application is started by notification data, the Intent data will be passed to this OnCreate method.
             CreateNotificationFromIntent(Intent);
 
-            // Create and register the MMS Observer to the content resolver.
-            MMSObserver mmsObserver = new MMSObserver(MMS_URI);
+            // Register the MMS Observer to the content resolver.
             ContentResolver.RegisterContentObserver(MMS_URI, false, mmsObserver);
+            //ContentResolver.NotifyChange(MMS_URI, mmsObserver);
 
-            // Create and register the MMS Receiver to receive only MMS_RECEIVED intents, 
+            // Register the MMS Receiver to receive only MMS_RECEIVED intents,
             // which only MMS Observer sends.
-            MMSReceiver mmsReceiver = new MMSReceiver();
-            IntentFilter mmsReceiverIntentFilter = new IntentFilter(MMS_RECEIVED);
             RegisterReceiver(mmsReceiver, mmsReceiverIntentFilter);
+            //RegisterReceiver(mmsReceiver2, mmsReceiverIntentFilter2);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -82,6 +90,14 @@ namespace RoosterBlock.Droid
                 string message = intent.Extras.GetString(AndroidNotificationManager.MessageKey);
                 DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            ContentResolver.UnregisterContentObserver(mmsObserver);
+            UnregisterReceiver(mmsReceiver);
+            //UnregisterReceiver(mmsReceiver2);
+            base.OnDestroy();
         }
     }
 }
