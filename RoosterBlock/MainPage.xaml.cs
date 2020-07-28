@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace RoosterBlock
 {
     public partial class MainPage : ContentPage
     {
-        INotificationManager notificationManager;
+        readonly INotificationManager notificationManager;
         int percentage = 0;
 
         public MainPage()
@@ -20,8 +15,8 @@ namespace RoosterBlock
             notificationManager = DependencyService.Get<INotificationManager>();
             notificationManager.NotificationReceived += (sender, eventArgs) =>
             {
-                var evtData = (NotificationEventArgs)eventArgs;
-                ShowNotification(evtData.Title, evtData.Message);
+                var eventData = (NotificationEventArgs)eventArgs;
+                ShowNotification(eventData.Title, eventData.Message);
             };
         }
 

@@ -32,6 +32,8 @@ namespace RoosterBlock.Droid
             CreateNotificationChannel();
         }
 
+        const string MarkAsReadAction = "Mark as Read";
+
         public int ScheduleNotification(string title, string message)
         {
             if (!channelInitialized)
@@ -44,17 +46,25 @@ namespace RoosterBlock.Droid
             Intent intent = new Intent(AndroidApp.Context, typeof(MainActivity));
             intent.PutExtra(TitleKey, title);
             intent.PutExtra(MessageKey, message);
+            intent.SetAction(MarkAsReadAction);
 
             PendingIntent pendingIntent = PendingIntent.GetActivity(AndroidApp.Context, pendingIntentId, intent, PendingIntentFlags.OneShot);
 
+            PendingIntent intent2 = PendingIntent.GetActivity(AndroidApp.Context, pendingIntentId, intent, PendingIntentFlags.OneShot);
+
             // TODO: Update the notification icons from xamagonBlue once we have a RoosterBlock icon.
+            // Setting SetPriority to PriorityHigh is step 1 of 2 to make notifications appear as Heads-Up
+            // Notifications.
+            // https://stackoverflow.com/questions/29949501/android-show-notification-with-a-popup-on-top-of-any-application
             NotificationCompat.Builder builder = new NotificationCompat.Builder(AndroidApp.Context, channelId)
                 .SetContentIntent(pendingIntent)
                 .SetContentTitle(title)
                 .SetContentText(message)
                 .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Drawable.xamagonBlue))
                 .SetSmallIcon(Resource.Drawable.xamagonBlue)
-                .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate);
+                .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate)
+                .SetPriority(NotificationCompat.PriorityHigh)
+                .AddAction(Resource.Drawable.ic_mtrl_chip_checked_black, MarkAsReadAction, intent2);
 
             var notification = builder.Build();
             manager.Notify(messageId, notification);
@@ -80,7 +90,10 @@ namespace RoosterBlock.Droid
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 var channelNameJava = new Java.Lang.String(channelName);
-                var channel = new NotificationChannel(channelId, channelNameJava, NotificationImportance.Default)
+
+                // Setting NotificationImportance to High is step 2 of 2 to make notifications appear as Heads-Up
+                // Notifications.
+                var channel = new NotificationChannel(channelId, channelNameJava, NotificationImportance.High)
                 {
                     Description = channelDescription
                 };
