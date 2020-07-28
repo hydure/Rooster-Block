@@ -52,7 +52,6 @@ namespace RoosterBlock.Droid
 
             PendingIntent intent2 = PendingIntent.GetActivity(AndroidApp.Context, pendingIntentId, intent, PendingIntentFlags.OneShot);
 
-            // TODO: Update the notification icons from xamagonBlue once we have a RoosterBlock icon.
             // Setting SetPriority to PriorityHigh is step 1 of 2 to make notifications appear as Heads-Up
             // Notifications.
             // https://stackoverflow.com/questions/29949501/android-show-notification-with-a-popup-on-top-of-any-application
@@ -60,8 +59,8 @@ namespace RoosterBlock.Droid
                 .SetContentIntent(pendingIntent)
                 .SetContentTitle(title)
                 .SetContentText(message)
-                .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Mipmap.icon))
-                .SetSmallIcon(Resource.Mipmap.icon)
+                .SetLargeIcon(BitmapFactory.DecodeResource(AndroidApp.Context.Resources, Resource.Drawable.largeRooosterBlock))
+                .SetSmallIcon(Resource.Drawable.smallRoosterBlock)
                 .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate)
                 .SetPriority(NotificationCompat.PriorityHigh)
                 .AddAction(Resource.Drawable.ic_mtrl_chip_checked_black, MarkAsReadAction, intent2);
