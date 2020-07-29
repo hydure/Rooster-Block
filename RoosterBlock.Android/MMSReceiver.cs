@@ -29,6 +29,11 @@ namespace RoosterBlock.Droid
         },
         Priority = (int)IntentFilterPriority.HighPriority,
         DataMimeType = "application/vnd.wap.mms-message")]
+    [IntentFilter(new[]
+        {
+            Android.Provider.Telephony.Sms.Intents.SmsReceivedAction,
+        },
+        Priority = (int)IntentFilterPriority.HighPriority)]
     public class MMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
