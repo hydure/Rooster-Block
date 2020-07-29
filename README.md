@@ -1,5 +1,5 @@
 # RoosterBlock
-An Xmarin.Forms-based Android app that reads incoming SMS and MMS messages.
+An Xamarin.Forms-based Android app that reads incoming SMS and MMS messages.
 
 ## Motivation
 A lot of people get unsavory pics, and we just want to help alert them so they are no longer surprised by said pics.
