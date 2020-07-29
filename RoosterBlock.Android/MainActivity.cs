@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Xamarin.Forms;
 
 namespace RoosterBlock.Droid
@@ -21,15 +22,15 @@ namespace RoosterBlock.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         // Constants for the MMS Observer and Receiver.
-        public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
-        static readonly Android.Net.Uri MMS_URI = Android.Net.Uri.Parse("content://mms");
+        //public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
+        //static readonly Android.Net.Uri MMS_URI = Android.Net.Uri.Parse("content://mms");
 
         // Create the MMS Observer.
-        MMSObserver mmsObserver = new MMSObserver(MMS_URI);
+        //MMSObserver mmsObserver = new MMSObserver(MMS_URI);
 
         // Create the MMS Receiver.
-        MMSReceiver mmsReceiver = new MMSReceiver();
-        IntentFilter mmsReceiverIntentFilter = new IntentFilter(MMS_RECEIVED);
+        //MMSReceiver mmsReceiver;
+        //IntentFilter mmsReceiverIntentFilter;
         //MMSReceiver mmsReceiver2 = new MMSReceiver();
         //IntentFilter mmsReceiverIntentFilter2 = new IntentFilter("android.provider.Telephony.WAP_PUSH_RECEIVED");
 
@@ -40,21 +41,27 @@ namespace RoosterBlock.Droid
 
             base.OnCreate(savedInstanceState);
 
+            //mmsReceiver = new MMSReceiver();
+            //mmsReceiverIntentFilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.SmsReceivedAction);
+            //mmsReceiverIntentFilter.AddAction(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
+            //mmsReceiverIntentFilter.AddAction(Android.Provider.Telephony.Sms.Intents.DataSmsReceivedAction);
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
 
             // When the application is started by notification data, the Intent data will be passed to this OnCreate method.
-            CreateNotificationFromIntent(Intent);
+            //CreateNotificationFromIntent(Intent);
 
             // Register the MMS Observer to the content resolver.
-            ContentResolver.RegisterContentObserver(MMS_URI, false, mmsObserver);
+            //ContentResolver.RegisterContentObserver(MMS_URI, false, mmsObserver);
             //ContentResolver.NotifyChange(MMS_URI, mmsObserver);
 
             // Register the MMS Receiver to receive only MMS_RECEIVED intents,
             // which only MMS Observer sends.
-            RegisterReceiver(mmsReceiver, mmsReceiverIntentFilter);
+            //RegisterReceiver(mmsReceiver, mmsReceiverIntentFilter);
             //RegisterReceiver(mmsReceiver2, mmsReceiverIntentFilter2);
+            Log.Info("MainActivity", "Rob Completed Initialization");
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -92,12 +99,12 @@ namespace RoosterBlock.Droid
             }
         }
 
-        protected override void OnDestroy()
-        {
-            ContentResolver.UnregisterContentObserver(mmsObserver);
-            UnregisterReceiver(mmsReceiver);
-            //UnregisterReceiver(mmsReceiver2);
-            base.OnDestroy();
-        }
+        //protected override void OnDestroy()
+        //{
+        //    ContentResolver.UnregisterContentObserver(mmsObserver);
+        //    UnregisterReceiver(mmsReceiver);
+        //    //UnregisterReceiver(mmsReceiver2);
+        //    base.OnDestroy();
+        //}
     }
 }

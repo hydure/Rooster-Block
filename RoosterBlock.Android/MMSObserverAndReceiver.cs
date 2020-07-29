@@ -21,37 +21,44 @@ using AndroidApp = Android.App.Application;
 namespace RoosterBlock.Droid
 {
 
-    public class MMSObserver : ContentObserver
-    {
-        private readonly Android.Net.Uri _uri;
-        private static readonly string TAG = "MMS Observer";
-        public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
+    //public class MMSObserver : ContentObserver
+    //{
+    //    private readonly Android.Net.Uri _uri;
+    //    private static readonly string TAG = "MMS Observer";
+    //    public static readonly string MMS_RECEIVED = "MMSObserver.intent.action.MMS_RECEIVED";
 
-        public MMSObserver (Android.Net.Uri uri): base(null)
-        {
-            _uri = uri;
-        }
+    //    public MMSObserver (Android.Net.Uri uri): base(null)
+    //    {
+    //        _uri = uri;
+    //    }
 
-        public override void OnChange(bool selfChange)
-        {
-            Log.Info(TAG, "Observed a change.");
-            Task.Run(() => {
-                Intent mmsIntent = new Intent(MMS_RECEIVED);
-                AndroidApp.Context.SendBroadcast(mmsIntent);
-            });
-            base.OnChange(selfChange);
-        }
-    }
+    //    public override void OnChange(bool selfChange)
+    //    {
+    //        Log.Info(TAG, "Observed a change.");
+    //        Task.Run(() => {
+    //            Intent mmsIntent = new Intent(MMS_RECEIVED);
+    //            AndroidApp.Context.SendBroadcast(mmsIntent);
+    //        });
+    //        base.OnChange(selfChange);
+    //    }
+    //}
 
-    [BroadcastReceiver (Enabled = true)]
+    [BroadcastReceiver(Enabled = true, Exported = true)]
     //[IntentFilter(new[] { Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction })]
     //[IntentFilter(new[] { "MMSObserver.intent.action.MMS_RECEIVED" })]
+    [IntentFilter(new[]
+        {
+            Android.Provider.Telephony.Sms.Intents.SmsReceivedAction,
+            Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction
+        },
+        Priority = (int)IntentFilterPriority.HighPriority)]
     public class MMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
 
         public override void OnReceive(Context context, Intent intent)
         {
+            Log.Info("Hi", "Got here");
             Log.Info(TAG, "Intent received: " + intent.Action);
         }
     }
