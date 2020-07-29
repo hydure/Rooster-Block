@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Util;
+using Android.Telephony;
 using Xamarin.Forms;
 using AndroidApp = Android.App.Application;
 
@@ -40,17 +41,13 @@ namespace RoosterBlock.Droid
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
-            string title = "New Text Received";
-            string message = "Bad text, pls delete thx";
+            
+            SmsMessage msg = Android.Provider.Telephony.Sms.Intents.GetMessagesFromIntent(intent)[0];
+            string title = "New Text Recieved From: " + msg.DisplayOriginatingAddress;
+            string message = msg.DisplayMessageBody;
+
+            DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
-            ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
-            string[] projection = new string[] { "*" };
-            Android.Net.Uri uri = Android.Net.Uri.Parse("content://sms");
-            Android.Database.ICursor query = contentResolver.Query(uri, projection, null, null, null);
-            string phone = query.GetString(query.GetColumnIndex("address"));
-               int type  = query.GetInt(query.GetColumnIndex("type"));// 2 = sent, etc.
-            string date  = query.GetString(query.GetColumnIndex("date"));
-            string body  = query.GetString(query.GetColumnIndex("body"));
         }
     }
 }
