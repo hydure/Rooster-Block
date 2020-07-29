@@ -3,6 +3,10 @@ using Android.Util;
 using Android.Telephony;
 using Xamarin.Forms;
 using AndroidApp = Android.App.Application;
+using System;
+using System.Text.RegularExpressions;
+using Android.Icu.Text;
+using System.Collections.Generic;
 
 namespace RoosterBlock.Droid
 {
@@ -37,17 +41,37 @@ namespace RoosterBlock.Droid
     public class SMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "SMS Broadcast Receiver";
+        private readonly string[] roosterWords = { "dick", "pussy", "penis", "ass", "butt", "vagina", "bitch", "slut", "whore" };
 
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
+
             
             SmsMessage msg = Android.Provider.Telephony.Sms.Intents.GetMessagesFromIntent(intent)[0];
             string title = "New Text Recieved From: " + msg.DisplayOriginatingAddress;
             string message = msg.DisplayMessageBody;
 
-            DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
-            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+            int numOfSaucyWordsInMessage = 0;
+            List<string> saucyWordsFound = new List<string>(); ;
+            foreach (string word in roosterWords)
+            {
+                saucyWordsFound.Add(word);
+                if(Regex.IsMatch(message, String.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
+                {
+                    numOfSaucyWordsInMessage += 1;
+                }
+            }
+
+            if (numOfSaucyWordsInMessage > 0)
+            {
+                foreach (string word in saucyWordsFound)
+                {
+                    string pattern = String.Format(@"\b{0}\b", word);
+                    message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase);
+                }
+                DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+            }   
         }
     }
 }
