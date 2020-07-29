@@ -1,22 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.Database;
-using Android.OS;
-using Android.Runtime;
-using Android.Text.Style;
+﻿using Android.Content;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Xamarin.Forms;
-using Android.Content.PM;
-using AndroidApp = Android.App.Application;
 
 namespace RoosterBlock.Droid
 {
@@ -27,7 +11,7 @@ namespace RoosterBlock.Droid
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
-            string title = "New Text Recieved";
+            string title = "New Text Received";
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
         }
