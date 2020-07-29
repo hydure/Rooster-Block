@@ -24,7 +24,6 @@ namespace RoosterBlock.Droid
     [BroadcastReceiver(Enabled = true, Exported = true)]
     [IntentFilter(new[]
         {
-            Android.Provider.Telephony.Sms.Intents.SmsReceivedAction,
             Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction
         },
         Priority = (int)IntentFilterPriority.HighPriority,
