@@ -22,6 +22,8 @@ namespace RoosterBlock.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         MMSReceiver mmsReceiver;
+        MMSReceiver smsReceiver;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -30,6 +32,7 @@ namespace RoosterBlock.Droid
             base.OnCreate(savedInstanceState);
 
             mmsReceiver = new MMSReceiver();
+            smsReceiver = new MMSReceiver();
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -76,22 +79,21 @@ namespace RoosterBlock.Droid
         {
             base.OnResume();
 
-            IntentFilter intentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.SmsReceivedAction)
+            IntentFilter smsIntentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.SmsReceivedAction)
             {
                 Priority = (int)IntentFilterPriority.HighPriority
             };
 
-            intentfilter.AddAction(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
-            intentfilter.AddDataType("application/vnd.wap.mms-message");
+            IntentFilter mmsIntentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
+            mmsIntentfilter.AddDataType("application/vnd.wap.mms-message");
 
-            RegisterReceiver(mmsReceiver, intentfilter);
+            RegisterReceiver(smsReceiver, smsIntentfilter);
+            RegisterReceiver(mmsReceiver, mmsIntentfilter);
         }
 
         protected override void OnDestroy()
         {
-        //    ContentResolver.UnregisterContentObserver(mmsObserver);
             UnregisterReceiver(mmsReceiver);
-        //    //UnregisterReceiver(mmsReceiver2);
             base.OnDestroy();
         }
     }

@@ -30,6 +30,10 @@ namespace RoosterBlock.Droid
             string title = "New Text Recieved";
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+            ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
+            string[] projection = new String[] { "*" };
+            Android.Net.Uri uri = Android.Net.Uri.Parse("content://mms");
+            Android.Database.ICursor query = contentResolver.Query(uri, projection, null, null, null);
         }
     }
 }
