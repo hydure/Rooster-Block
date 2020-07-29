@@ -20,20 +20,6 @@ using AndroidApp = Android.App.Application;
 
 namespace RoosterBlock.Droid
 {
-
-    [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[]
-        {
-            Android.Provider.Telephony.Sms.Intents.SmsReceivedAction,
-            Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction
-        },
-        Priority = (int)IntentFilterPriority.HighPriority,
-        DataMimeType = "application/vnd.wap.mms-message")]
-    [IntentFilter(new[]
-        {
-            Android.Provider.Telephony.Sms.Intents.SmsReceivedAction,
-        },
-        Priority = (int)IntentFilterPriority.HighPriority)]
     public class MMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
