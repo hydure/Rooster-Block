@@ -5,14 +5,14 @@ using AndroidApp = Android.App.Application;
 
 namespace RoosterBlock.Droid
 {
-    public class MessageReceiver : BroadcastReceiver
+    public class MMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
 
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
-            string title = "New Text Received";
+            string title = "New Pic Received";
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
@@ -28,12 +28,29 @@ namespace RoosterBlock.Droid
                     {
                         
                     }
-                    else // it's SMS
-                    {
-                        
-                    }
                 } while (query.MoveToNext());
             }
+        }
+    }
+
+    public class SMSReceiver : BroadcastReceiver
+    {
+        private static readonly string TAG = "SMS Broadcast Receiver";
+
+        public override void OnReceive(Context context, Intent intent)
+        {
+            Log.Info(TAG, "Intent action received: " + intent.Action);
+            string title = "New Text Received";
+            string message = "Bad text, pls delete thx";
+            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+            ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
+            string[] projection = new string[] { "*" };
+            Android.Net.Uri uri = Android.Net.Uri.Parse("content://sms");
+            Android.Database.ICursor query = contentResolver.Query(uri, projection, null, null, null);
+            string phone = query.GetString(query.GetColumnIndex("address"));
+               int type  = query.GetInt(query.GetColumnIndex("type"));// 2 = sent, etc.
+            string date  = query.GetString(query.GetColumnIndex("date"));
+            string body  = query.GetString(query.GetColumnIndex("body"));
         }
     }
 }

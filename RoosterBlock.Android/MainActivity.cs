@@ -21,8 +21,8 @@ namespace RoosterBlock.Droid
         LaunchMode = LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        MessageReceiver mmsReceiver;
-        MessageReceiver smsReceiver;
+        MMSReceiver mmsReceiver;
+        SMSReceiver smsReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -31,8 +31,8 @@ namespace RoosterBlock.Droid
 
             base.OnCreate(savedInstanceState);
 
-            mmsReceiver = new MessageReceiver();
-            smsReceiver = new MessageReceiver();
+            mmsReceiver = new MMSReceiver();
+            smsReceiver = new SMSReceiver();
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -94,6 +94,7 @@ namespace RoosterBlock.Droid
         protected override void OnDestroy()
         {
             UnregisterReceiver(mmsReceiver);
+            UnregisterReceiver(smsReceiver);
             base.OnDestroy();
         }
     }
