@@ -5,7 +5,7 @@ using AndroidApp = Android.App.Application;
 
 namespace RoosterBlock.Droid
 {
-    public class MMSReceiver : BroadcastReceiver
+    public class MessageReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
 
@@ -19,6 +19,21 @@ namespace RoosterBlock.Droid
             string[] projection = new string[] { "*" };
             Android.Net.Uri uri = Android.Net.Uri.Parse("content://mms");
             Android.Database.ICursor query = contentResolver.Query(uri, projection, null, null, null);
+            if (query.MoveToFirst())
+            {
+                do
+                {
+                    string columnIndexStr = query.GetString(query.GetColumnIndex("ct_t"));
+                    if ("application/vnd.wap.multipart.related".Equals(columnIndexStr)) // it's MMS
+                    {
+                        
+                    }
+                    else // it's SMS
+                    {
+                        
+                    }
+                } while (query.MoveToNext());
+            }
         }
     }
 }
