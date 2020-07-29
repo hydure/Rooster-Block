@@ -41,9 +41,11 @@ namespace RoosterBlock.Droid
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
-            string title = "Oh no";
+            string title = "New Text Recieved";
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
+            MainPage mainpg = new MainPage();
+            mainpg.newNotification(title, message);
         }
     }
 }
