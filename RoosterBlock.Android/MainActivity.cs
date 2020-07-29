@@ -21,6 +21,7 @@ namespace RoosterBlock.Droid
         LaunchMode = LaunchMode.SingleTop)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        MMSReceiver mmsReceiver;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -28,6 +29,7 @@ namespace RoosterBlock.Droid
 
             base.OnCreate(savedInstanceState);
 
+            mmsReceiver = new MMSReceiver();
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -68,6 +70,28 @@ namespace RoosterBlock.Droid
                 string message = intent.Extras.GetString(AndroidNotificationManager.MessageKey);
                 DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
             }
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            IntentFilter intentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.SmsReceivedAction)
+            {
+                Priority = (int)IntentFilterPriority.HighPriority
+            };
+
+            intentfilter.AddAction(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
+
+            RegisterReceiver(mmsReceiver, intentfilter);
+        }
+
+        protected override void OnDestroy()
+        {
+        //    ContentResolver.UnregisterContentObserver(mmsObserver);
+            UnregisterReceiver(mmsReceiver);
+        //    //UnregisterReceiver(mmsReceiver2);
+            base.OnDestroy();
         }
     }
 }
