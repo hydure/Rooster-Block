@@ -42,10 +42,5 @@ namespace RoosterBlock
                 stackLayout.Children.Add(msg);
             });
         }
-
-        public void newNotification(string title, string message)
-        {
-            notificationManager.ScheduleNotification(title, message);
-        }
     }
 }

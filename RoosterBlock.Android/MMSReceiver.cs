@@ -29,9 +29,7 @@ namespace RoosterBlock.Droid
             Log.Info(TAG, "Intent action received: " + intent.Action);
             string title = "New Text Recieved";
             string message = "Bad pic, pls delete thx";
-            DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
-            MainPage mainpg = new MainPage();
-            mainpg.newNotification(title, message);
+            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
         }
     }
 }

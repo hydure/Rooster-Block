@@ -82,6 +82,7 @@ namespace RoosterBlock.Droid
             };
 
             intentfilter.AddAction(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
+            intentfilter.AddDataType("application/vnd.wap.mms-message");
 
             RegisterReceiver(mmsReceiver, intentfilter);
         }
