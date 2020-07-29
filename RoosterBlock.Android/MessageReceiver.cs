@@ -12,8 +12,10 @@ namespace RoosterBlock.Droid
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
-            string title = "New Text Received";
+
+            string title = "New Message Received";
             string message = "Bad pic, pls delete thx";
+
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
             string[] projection = new string[] { "*" };

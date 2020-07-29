@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Util;
 using Xamarin.Forms;
 
 namespace RoosterBlock.Droid
@@ -36,8 +35,6 @@ namespace RoosterBlock.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
-
-            Log.Info("MainActivity", "Rob Completed Initialization");
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -64,9 +61,6 @@ namespace RoosterBlock.Droid
         /// <param name="intent">This contains the title and message of the notification.</param>
         public static void CreateNotificationFromIntent(Intent intent)
         {
-            // TODO: Android offers many advanced options for notifications. For more information, see Notifications in
-            // Xamarin.Android.
-            // https://docs.microsoft.com/en-us/xamarin/android/app-fundamentals/notifications/
             if (intent?.Extras != null)
             {
                 string title = intent.Extras.GetString(AndroidNotificationManager.TitleKey);
