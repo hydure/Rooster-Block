@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Util;
 using Xamarin.Forms;
+using AndroidApp = Android.App.Application;
 
 namespace RoosterBlock.Droid
 {
@@ -15,7 +16,7 @@ namespace RoosterBlock.Droid
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
-            string[] projection = new String[] { "*" };
+            string[] projection = new string[] { "*" };
             Android.Net.Uri uri = Android.Net.Uri.Parse("content://mms");
             Android.Database.ICursor query = contentResolver.Query(uri, projection, null, null, null);
         }
