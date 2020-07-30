@@ -90,7 +90,7 @@ namespace RoosterBlock.Droid
                 (string, bool) result = CleanUpMessage(message);
 
                 // If there were one or more rooster words.
-                if (!result.Item2)
+                if (result.Item2)
                 {
                     containsRoosterWords = result.Item2;
                 }
@@ -111,12 +111,14 @@ namespace RoosterBlock.Droid
                 List<ImageClassificationModel> classList = new List<ImageClassificationModel>();
                 classList = model.Classify(bitmapData);
                 float probability = classList[0].Probability * 100; //percentage
+                Log.Info(TAG, "The probability of this image being a rooster is: " + probability);
 
                 if (probability >= THRESHOLD)
                 {
                     message = "WARNING " + probability + "% chance you received a rooster pic.";
 
                     string title = "";
+                    //TODO: Fix this logic so that containsRoosterWords is true when there are rooster-like words in the MMS text.
                     if (containsRoosterWords)
                     {
                         title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
@@ -140,7 +142,7 @@ namespace RoosterBlock.Droid
             foreach (string word in roosterWords)
             {
                 saucyWordsFound.Add(word);
-                if (Regex.IsMatch(message, string.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
+                if (Regex.IsMatch(message, string.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)))
                 {
                     numOfRoosterWordsInMessage += 1;
                 }
