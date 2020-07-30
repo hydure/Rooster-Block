@@ -104,7 +104,7 @@ namespace RoosterBlock.Droid
             }
             else
             {
-                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id)";
+                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
             }
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
         }// public override void OnReceive(Context context, Intent intent)
@@ -119,7 +119,7 @@ namespace RoosterBlock.Droid
             foreach (string word in roosterWords)
             {
                 saucyWordsFound.Add(word);
-                if (Regex.IsMatch(message, String.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
+                if (Regex.IsMatch(message, string.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
                 {
                     numOfRoosterWordsInMessage += 1;
                 }
@@ -132,10 +132,9 @@ namespace RoosterBlock.Droid
                 containedRoosterWords = true;
                 foreach (string word in saucyWordsFound)
                 {
-                    string pattern = String.Format(@"\b{0}\b", word);
+                    string pattern = string.Format(@"\b{0}\b", word);
                     message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase);
                 }
-                DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
             }
             return (message, containedRoosterWords);
         }
@@ -154,7 +153,7 @@ namespace RoosterBlock.Droid
                 {
                     Java.IO.InputStreamReader inputStreamReader = new Java.IO.InputStreamReader(inputStream, "UTF-8");
                     Java.IO.BufferedReader reader = new Java.IO.BufferedReader(inputStreamReader);
-                    String temp = reader.ReadLine();
+                    string temp = reader.ReadLine();
                     while (temp != null)
                     {
                         stringBuilder.Append(temp);
@@ -237,12 +236,13 @@ namespace RoosterBlock.Droid
                             Java.Lang.Long.ParseLong(number.Replace("-", ""));
                             name = number;
                         }
-                        catch (NumberFormatException nfe)
+                        catch (NumberFormatException exception)
                         {
                             if (name == null)
                             {
                                 name = number;
                             }
+                            Log.Error(TAG, "Get address number received an exception: " + exception);
                         }
                     }
                 } while (query.MoveToNext());
