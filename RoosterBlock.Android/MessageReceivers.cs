@@ -24,7 +24,7 @@ namespace RoosterBlock.Droid
             string message = "Bad pic, pls delete thx";
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
 
-            // Get the MMS ID.
+            // Get the MMS ID. Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
             Android.Net.Uri mmsInboxUri = Android.Net.Uri.Parse("content://mms");
             Android.Database.ICursor mmsInboxCursor = contentResolver.Query(mmsInboxUri, new string[]
@@ -44,9 +44,11 @@ namespace RoosterBlock.Droid
                 {
                     Log.Error(TAG, "Error requesting the MMS ID: " + error.Message);
                 }
-            }
+            }// if (mmsInboxCursor != null)
 
-            // Get text from MMS message.
+            // Get text and picture from MMS message. Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+            string body = ""; // text
+            Android.Graphics.Bitmap bitmap = null; // picture
             string selectionPart = "mid=" + id;
             Android.Net.Uri mmsTextUri = Android.Net.Uri.Parse("content://mms/part");
             Android.Database.ICursor cursor = contentResolver.Query(mmsTextUri, null,
@@ -57,13 +59,14 @@ namespace RoosterBlock.Droid
                 {
                     string partId = cursor.GetString(cursor.GetColumnIndex("_id"));
                     string type = cursor.GetString(cursor.GetColumnIndex("ct"));
+                    // Get text.
                     if ("text/plain".Equals(type))
                     {
                         string data = cursor.GetString(cursor.GetColumnIndex("_data"));
-                        string body;
+                        
                         if (data != null)
                         {
-                            body = getMmsText(partId);
+                            body = GetMmsText(partId);
                             Log.Info(TAG, "Body is this: " + body);
                         }
                         else
@@ -72,11 +75,18 @@ namespace RoosterBlock.Droid
                             Log.Info(TAG, "Body is this: " + body);
                         }
                     }
+                    //Get picture.
+                    if ("image/jpeg".Equals(type) || "image/bmp".Equals(type) ||
+                            "image/gif".Equals(type) || "image/jpg".Equals(type) ||
+                            "image/png".Equals(type))
+                    {
+                        bitmap = GetMmsImage(partId);
+                    }
                 } while (cursor.MoveToNext());
-            }
-        }
+            }// if (cursor.MoveToFirst())
+        }// public override void OnReceive(Context context, Intent intent)
 
-        private String getMmsText(String id)
+        private String GetMmsText(String id)
         {
             Android.Net.Uri partURI = Android.Net.Uri.Parse("content://mms/part/" + id);
             System.IO.Stream inputStream = null;
@@ -115,6 +125,38 @@ namespace RoosterBlock.Droid
                 }
             }
             return stringBuilder.ToString();
+        }
+
+        private Android.Graphics.Bitmap GetMmsImage(String _id)
+        {
+            Android.Net.Uri mmsTextUri = Android.Net.Uri.Parse("content://mms/part/" + _id);
+            System.IO.Stream inputStream = null;
+            Android.Graphics.Bitmap bitmap = null;
+            try
+            {
+                ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
+                inputStream = contentResolver.OpenInputStream(mmsTextUri);
+                bitmap = Android.Graphics.BitmapFactory.DecodeStream(inputStream);
+            }
+            catch (System.IO.IOException error) 
+            {
+                Log.Error(TAG, "Error reading MMS picture: " + error);
+            }
+            finally
+            {
+                if (inputStream != null)
+                {
+                    try
+                    {
+                        inputStream.Close();
+                    }
+                    catch (System.IO.IOException error)
+                    {
+                        Log.Error(TAG, "Error closing input stream for reading MMS picture: " + error);
+                    }
+                }
+            }
+            return bitmap;
         }
     }
 

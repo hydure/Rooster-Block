@@ -84,7 +84,10 @@ namespace RoosterBlock.Droid
                 Priority = (int)IntentFilterPriority.HighPriority
             };
 
-            IntentFilter mmsIntentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction);
+            IntentFilter mmsIntentfilter = new IntentFilter(Android.Provider.Telephony.Sms.Intents.WapPushReceivedAction)
+            {
+                Priority = (int)IntentFilterPriority.HighPriority
+            };
             mmsIntentfilter.AddDataType("application/vnd.wap.mms-message");
 
             RegisterReceiver(smsReceiver, smsIntentfilter);
