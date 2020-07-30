@@ -83,28 +83,29 @@ namespace RoosterBlock.Droid
             }// if (cursor.MoveToFirst())
 
             // Analyze message, if there is one.
-            string title = "";
+            bool containsRoosterWords = false;
             if (message != "")
             {
                 (string, bool) result = CleanUpMessage(message);
 
                 // If there were one or more rooster words.
-                if (result.Item2)
+                if (!result.Item2)
                 {
-                    title = "Rooster Text Received From: " + GetAddressNumber(id);
+                    containsRoosterWords = result.Item2;
                 }
             }
             // TODO: Factor in CNN.
             string probability = "";
             message = "WARNING " + probability + "% chance you received a rooster pic.";
-            
-            if (title == "")
+
+            string title = "";
+            if (containsRoosterWords)
             {
-                title = "Rooster Pic Received From: " + GetAddressNumber(id);
+                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
             }
             else
             {
-                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
+                title = "Rooster Pic Received From: " + GetAddressNumber(id);
             }
             DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
         }// public override void OnReceive(Context context, Intent intent)
@@ -221,34 +222,32 @@ namespace RoosterBlock.Droid
             string uriStr = MessageFormat.Format("content://mms/{0}/addr", id);
             Android.Net.Uri uriAddress = Android.Net.Uri.Parse(uriStr);
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
-            Android.Database.ICursor query = contentResolver.Query(uriAddress, null,
-                selectionAdd, null, null);
+            Android.Database.ICursor query = contentResolver.Query(uriAddress, null, selectionAdd, null, null);
             string name = null;
-            if (query.MoveToFirst())
-            {
-                do
+            if (query != null) {
+                if (query.MoveToFirst())
                 {
-                    string number = query.GetString(query.GetColumnIndex("address"));
-                    if (number != null)
+                    do
                     {
-                        try
+                        string number = query.GetString(query.GetColumnIndex("address"));
+                        if (number != null)
                         {
-                            Java.Lang.Long.ParseLong(number.Replace("-", ""));
-                            name = number;
-                        }
-                        catch (NumberFormatException exception)
-                        {
-                            if (name == null)
+                            try
                             {
+                                Java.Lang.Long.ParseLong(number.Replace("-", ""));
                                 name = number;
                             }
-                            Log.Error(TAG, "Get address number received an exception: " + exception);
+                            catch (NumberFormatException exception)
+                            {
+                                if (name == null)
+                                {
+                                    name = number;
+                                }
+                                Log.Error(TAG, "Get address number received an exception: " + exception);
+                            }
                         }
-                    }
-                } while (query.MoveToNext());
-            }
-            if (query != null)
-            {
+                    } while (query.MoveToNext());
+                }
                 query.Close();
             }
             return name;
@@ -272,7 +271,7 @@ namespace RoosterBlock.Droid
             if (result.Item2)
             {
                 string title = "Rooster Text Received From: " + msg.DisplayOriginatingAddress;
-                DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+                DependencyService.Get<INotificationManager>().ScheduleNotification(title, result.Item1);
             }   
         }
     }
