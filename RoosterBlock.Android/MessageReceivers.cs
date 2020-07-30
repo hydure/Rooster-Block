@@ -9,6 +9,7 @@ using Android.Icu.Text;
 using System.Collections.Generic;
 using Android.OS;
 using Android.Provider;
+using Java.Lang;
 
 namespace RoosterBlock.Droid
 {
@@ -20,11 +21,7 @@ namespace RoosterBlock.Droid
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
 
-            string title = "New Pic Received";
-            string message = "Bad pic, pls delete thx";
-            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
-
-            // Get the MMS ID. Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+            // Get the MMS ID. Adapted from: https://stackoverflow.com/questions/10065249/how-to-get-mms-id-android-application
             ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
             Android.Net.Uri mmsInboxUri = Android.Net.Uri.Parse("content://mms");
             Android.Database.ICursor mmsInboxCursor = contentResolver.Query(mmsInboxUri, new string[]
@@ -40,14 +37,14 @@ namespace RoosterBlock.Droid
                         Log.Info(TAG, "Id is this: " + mmsInboxCursor.GetString(0));
                     }
                 }
-                catch (Exception error)
+                catch (System.Exception error)
                 {
                     Log.Error(TAG, "Error requesting the MMS ID: " + error.Message);
                 }
             }// if (mmsInboxCursor != null)
 
             // Get text and picture from MMS message. Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
-            string body = ""; // text
+            string message = ""; // text
             Android.Graphics.Bitmap bitmap = null; // picture
             string selectionPart = "mid=" + id;
             Android.Net.Uri mmsTextUri = Android.Net.Uri.Parse("content://mms/part");
@@ -66,13 +63,13 @@ namespace RoosterBlock.Droid
                         
                         if (data != null)
                         {
-                            body = GetMmsText(partId);
-                            Log.Info(TAG, "Body is this: " + body);
+                            message = GetMmsText(partId);
+                            Log.Info(TAG, "Body is this: " + message);
                         }
                         else
                         {
-                            body = cursor.GetString(cursor.GetColumnIndex("text"));
-                            Log.Info(TAG, "Body is this: " + body);
+                            message = cursor.GetString(cursor.GetColumnIndex("text"));
+                            Log.Info(TAG, "Body is this: " + message);
                         }
                     }
                     //Get picture.
@@ -84,9 +81,67 @@ namespace RoosterBlock.Droid
                     }
                 } while (cursor.MoveToNext());
             }// if (cursor.MoveToFirst())
+
+            // Analyze message, if there is one.
+            string title = "";
+            if (message != "")
+            {
+                (string, bool) result = CleanUpMessage(message);
+
+                // If there were one or more rooster words.
+                if (result.Item2)
+                {
+                    title = "Rooster Text Received From: " + GetAddressNumber(id);
+                }
+            }
+            // TODO: Factor in CNN.
+            string probability = "";
+            message = "WARNING " + probability + "% chance you received a rooster pic.";
+            
+            if (title == "")
+            {
+                title = "Rooster Pic Received From: " + GetAddressNumber(id);
+            }
+            else
+            {
+                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id)";
+            }
+            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
         }// public override void OnReceive(Context context, Intent intent)
 
-        private String GetMmsText(String id)
+        public static (string, bool) CleanUpMessage(string message)
+        {
+            string[] roosterWords = { "dick", "pussy", "penis", "ass", "butt", "vagina", "bitch", "slut", "whore", "cock", "cunt", "fuck" };
+            bool containedRoosterWords = false;
+            // Detect any rooster words from the message.
+            int numOfRoosterWordsInMessage = 0;
+            List<string> saucyWordsFound = new List<string>(); ;
+            foreach (string word in roosterWords)
+            {
+                saucyWordsFound.Add(word);
+                if (Regex.IsMatch(message, String.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
+                {
+                    numOfRoosterWordsInMessage += 1;
+                }
+            }
+
+            // If there are any rooster words, replace them with "&#%!" and then notify the user that a
+            // rooster has begun messaging them.
+            if (numOfRoosterWordsInMessage > 0)
+            {
+                containedRoosterWords = true;
+                foreach (string word in saucyWordsFound)
+                {
+                    string pattern = String.Format(@"\b{0}\b", word);
+                    message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase);
+                }
+                DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+            }
+            return (message, containedRoosterWords);
+        }
+
+        //Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+        private string GetMmsText(string id)
         {
             Android.Net.Uri partURI = Android.Net.Uri.Parse("content://mms/part/" + id);
             System.IO.Stream inputStream = null;
@@ -127,7 +182,8 @@ namespace RoosterBlock.Droid
             return stringBuilder.ToString();
         }
 
-        private Android.Graphics.Bitmap GetMmsImage(String _id)
+        //Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+        private Android.Graphics.Bitmap GetMmsImage(string _id)
         {
             Android.Net.Uri mmsTextUri = Android.Net.Uri.Parse("content://mms/part/" + _id);
             System.IO.Stream inputStream = null;
@@ -158,45 +214,64 @@ namespace RoosterBlock.Droid
             }
             return bitmap;
         }
+
+        //Adapted from: https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+        private string GetAddressNumber(int id)
+        {
+            string selectionAdd = new string("msg_id=" + id);
+            string uriStr = MessageFormat.Format("content://mms/{0}/addr", id);
+            Android.Net.Uri uriAddress = Android.Net.Uri.Parse(uriStr);
+            ContentResolver contentResolver = AndroidApp.Context.ContentResolver;
+            Android.Database.ICursor query = contentResolver.Query(uriAddress, null,
+                selectionAdd, null, null);
+            string name = null;
+            if (query.MoveToFirst())
+            {
+                do
+                {
+                    string number = query.GetString(query.GetColumnIndex("address"));
+                    if (number != null)
+                    {
+                        try
+                        {
+                            Java.Lang.Long.ParseLong(number.Replace("-", ""));
+                            name = number;
+                        }
+                        catch (NumberFormatException nfe)
+                        {
+                            if (name == null)
+                            {
+                                name = number;
+                            }
+                        }
+                    }
+                } while (query.MoveToNext());
+            }
+            if (query != null)
+            {
+                query.Close();
+            }
+            return name;
+        }
     }
 
     public class SMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "SMS Broadcast Receiver";
-        private readonly string[] roosterWords = { 
-            "dick", "pussy", "penis", "ass", "butt", "vagina", "bitch", "slut", "whore", "cock", "cunt", "fuck"
-        };
 
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Info(TAG, "Intent action received: " + intent.Action);
 
-            // Retrieve message from the intent.
+            // Retrieve message from the intent and analyze it.
             SmsMessage msg = Android.Provider.Telephony.Sms.Intents.GetMessagesFromIntent(intent)[0];
-            string title = "New Text Recieved From: " + msg.DisplayOriginatingAddress;
             string message = msg.DisplayMessageBody;
+            (string, bool) result = MMSReceiver.CleanUpMessage(message);
 
-            // Detect any rooster words from the message.
-            int numOfSaucyWordsInMessage = 0;
-            List<string> saucyWordsFound = new List<string>(); ;
-            foreach (string word in roosterWords)
+            // If there were one or more rooster words.
+            if (result.Item2)
             {
-                saucyWordsFound.Add(word);
-                if(Regex.IsMatch(message, String.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase)))
-                {
-                    numOfSaucyWordsInMessage += 1;
-                }
-            }
-
-            // If there are any rooster words, replace them with "&#%!" and then notify the user that a
-            // rooster has begun messaging them.
-            if (numOfSaucyWordsInMessage > 0)
-            {
-                foreach (string word in saucyWordsFound)
-                {
-                    string pattern = String.Format(@"\b{0}\b", word);
-                    message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase);
-                }
+                string title = "Rooster Text Received From: " + msg.DisplayOriginatingAddress;
                 DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
             }   
         }
