@@ -16,6 +16,7 @@ namespace RoosterBlock.Droid
     public class MMSReceiver : BroadcastReceiver
     {
         private static readonly string TAG = "MMS Broadcast Receiver";
+        int THRESHOLD = 50;
 
         public override void OnReceive(Context context, Intent intent)
         {
@@ -94,20 +95,39 @@ namespace RoosterBlock.Droid
                     containsRoosterWords = result.Item2;
                 }
             }
-            // TODO: Factor in CNN.
-            string probability = "";
-            message = "WARNING " + probability + "% chance you received a rooster pic.";
 
-            string title = "";
-            if (containsRoosterWords)
+            if (bitmap != null)
             {
-                title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
-            }
-            else
-            {
-                title = "Rooster Pic Received From: " + GetAddressNumber(id);
-            }
-            DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+                // Converting bitmap to byte array.
+                byte[] bitmapData;
+                using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+                {
+                    bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
+                    bitmapData = stream.ToArray();
+                }
+
+                // Factoring in CNN.
+                TensorflowClassifier model = new TensorflowClassifier();
+                List<ImageClassificationModel> classList = new List<ImageClassificationModel>();
+                classList = model.Classify(bitmapData);
+                float probability = classList[0].Probability * 100; //percentage
+
+                if (probability >= THRESHOLD)
+                {
+                    message = "WARNING " + probability + "% chance you received a rooster pic.";
+
+                    string title = "";
+                    if (containsRoosterWords)
+                    {
+                        title = "Rooster Pic & Text Received From: " + GetAddressNumber(id);
+                    }
+                    else
+                    {
+                        title = "Rooster Pic Received From: " + GetAddressNumber(id);
+                    }
+                    DependencyService.Get<INotificationManager>().ScheduleNotification(title, message);
+                }
+            }// if (bitmap != null)
         }// public override void OnReceive(Context context, Intent intent)
 
         public static (string, bool) CleanUpMessage(string message)
