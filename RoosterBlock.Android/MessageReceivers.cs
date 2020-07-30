@@ -141,9 +141,9 @@ namespace RoosterBlock.Droid
             List<string> saucyWordsFound = new List<string>(); ;
             foreach (string word in roosterWords)
             {
-                saucyWordsFound.Add(word);
                 if (Regex.IsMatch(message, string.Format(@"\b{0}\b", word, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)))
                 {
+                    saucyWordsFound.Add(word);
                     numOfRoosterWordsInMessage += 1;
                 }
             }
@@ -156,7 +156,7 @@ namespace RoosterBlock.Droid
                 foreach (string word in saucyWordsFound)
                 {
                     string pattern = string.Format(@"\b{0}\b", word);
-                    message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase);
+                    message = Regex.Replace(message, pattern, "&#%!", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
                 }
             }
             return (message, containedRoosterWords);
